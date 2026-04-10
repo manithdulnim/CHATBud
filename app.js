@@ -1,5 +1,6 @@
 // 1. Import Firebase functions directly from Google's CDN
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
+import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-analytics.js";
 import {
     getAuth,
     signInWithPopup,
@@ -8,18 +9,20 @@ import {
     signOut
 } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
 
-// 2. Your Firebase Configuration (Get this from Firebase Console -> Project Settings)
+// 2. Your Web App's Firebase Configuration
 const firebaseConfig = {
-    apiKey: "YOUR_API_KEY",
-    authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
-    projectId: "YOUR_PROJECT_ID",
-    storageBucket: "YOUR_PROJECT_ID.appspot.com",
-    messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
-    appId: "YOUR_APP_ID"
+  apiKey: "AIzaSyAp0ywAmfphqA8BJPWRag28yYQASokHz3Q",
+  authDomain: "chatbud-live.firebaseapp.com",
+  projectId: "chatbud-live",
+  storageBucket: "chatbud-live.firebasestorage.app",
+  messagingSenderId: "355009695073",
+  appId: "1:355009695073:web:c44c7130c86a35ca590920",
+  measurementId: "G-F514V1Y0YX"
 };
 
-// 3. Initialize Firebase
+// 3. Initialize Firebase, Analytics, and Auth
 const app = initializeApp(firebaseConfig);
+const analytics = getAnalytics(app);
 const auth = getAuth(app);
 const provider = new GoogleAuthProvider();
 
@@ -45,7 +48,7 @@ logoutBtn.addEventListener('click', () => {
     signOut(auth);
 });
 
-// 7. Listen for Auth State Changes (The magic that toggles the UI)
+// 7. Listen for Auth State Changes (Toggles the UI)
 onAuthStateChanged(auth, (user) => {
     if (user) {
         // User is signed in
