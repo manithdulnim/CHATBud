@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat Platform</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div id="login-screen" class="screen">
+        <div class="card">
+            <h1>Welcome</h1>
+            <p>Sign in to start chatting</p>
+            <button id="login-btn">Sign in with Google</button>
+        </div>
+    </div>
+
+    <div id="chat-screen" class="screen hidden">
+        <header>
+            <div>
+                <h2 id="user-name">Loading...</h2>
+            </div>
+            <button id="logout-btn">Logout</button>
+        </header>
+
+        <main id="chat-container">
+            <div class="message system-msg">Welcome to the chat!</div>
+        </main>
+
+        <footer>
+            <input type="text" id="message-input" placeholder="Type a message..." autocomplete="off">
+            <button id="send-btn">Send</button>
+        </footer>
+    </div>
+
+    <script type="module" src="app.js"></script>
+</body>
+</html>
