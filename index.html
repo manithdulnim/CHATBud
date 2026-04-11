@@ -16,26 +16,36 @@
         </div>
     </div>
 
-    <div id="chat-screen" class="screen hidden">
-        <header>
-            <div>
+    <div id="app-container" class="hidden">
+        
+        <aside id="sidebar">
+            <div class="sidebar-header">
                 <h2 id="user-name">Loading...</h2>
+                <button id="logout-btn">Logout</button>
             </div>
-            <button id="logout-btn">Logout</button>
-        </header>
+            <div id="users-list">
+                </div>
+        </aside>
 
-        <main id="chat-container">
-            <div class="message system-msg">Welcome to the chat!</div>
+        <main id="chat-screen">
+            <header>
+                <h3 id="current-chat-name">Select a user to start chatting</h3>
+            </header>
+
+            <div id="chat-container">
+                <div class="message system-msg" style="align-self: center; background: #e4e6eb; font-size: 13px;">
+                    Pick someone from the sidebar to chat!
+                </div>
+            </div>
+
+            <footer>
+                <input type="file" id="image-input" accept="image/*" class="hidden">
+                <button id="attach-btn" title="Attach Photo">📎</button>
+                <button id="mic-btn" title="Record Voice Note">🎤</button>
+                <input type="text" id="message-input" placeholder="Type a message..." autocomplete="off" disabled>
+                <button id="send-btn" disabled>Send</button>
+            </footer>
         </main>
-
-        <footer>
-            <input type="file" id="image-input" accept="image/*" class="hidden">
-            <button id="attach-btn" title="Attach Photo">📎</button>
-            <button id="mic-btn" title="Record Voice Note">🎤</button>
-            
-            <input type="text" id="message-input" placeholder="Type a message..." autocomplete="off">
-            <button id="send-btn">Send</button>
-        </footer>
     </div>
 
     <script type="module" src="app.js"></script>
