@@ -2,15 +2,12 @@
 body { background-color: #d1d7db; height: 100vh; display: flex; justify-content: center; align-items: center; }
 .hidden { display: none !important; }
 
-/* Login Screen */
 #login-screen { width: 100%; max-width: 400px; justify-content: center; align-items: center; background: transparent; }
 .card { background: white; padding: 2rem; border-radius: 12px; text-align: center; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
-.card button { background-color: #0084ff; color: white; border: none; padding: 10px 16px; border-radius: 6px; cursor: pointer; font-size: 16px; margin-top: 1rem; }
+.card button { background-color: #00a884; color: white; border: none; padding: 10px 16px; border-radius: 6px; cursor: pointer; font-size: 16px; margin-top: 1rem; }
 
-/* App Layout */
 #app-container { width: 100%; max-width: 1200px; height: 95vh; background: white; display: flex; box-shadow: 0 4px 20px rgba(0,0,0,0.1); border-radius: 10px; overflow: hidden; }
 
-/* Sidebar */
 #sidebar { width: 30%; min-width: 250px; background: #ffffff; border-right: 1px solid #d1d7db; display: flex; flex-direction: column; }
 .sidebar-header { padding: 15px; background: #f0f2f5; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #d1d7db; }
 .sidebar-header h2 { font-size: 16px; color: #111b21; }
@@ -20,19 +17,17 @@ body { background-color: #d1d7db; height: 100vh; display: flex; justify-content:
 .user-item:hover { background: #f5f6f6; }
 .user-item.active { background: #ebebeb; }
 
-/* Chat Screen */
 #chat-screen { flex: 1; display: flex; flex-direction: column; background: #efeae2; }
 header { padding: 15px; background: #f0f2f5; border-bottom: 1px solid #d1d7db; }
 header h3 { font-size: 16px; font-weight: 500; color: #111b21; }
 #chat-container { flex: 1; padding: 1rem; overflow-y: auto; background-image: url("https://www.transparenttextures.com/patterns/cubes.png"); display: flex; flex-direction: column; gap: 8px; scroll-behavior: smooth; overflow-x: hidden;}
 
-/* --- NEW: Quoted Message Block Inside Bubbles --- */
 .quoted-message { background: rgba(0,0,0,0.05); padding: 6px 10px; border-left: 4px solid #00a884; border-radius: 4px; margin-bottom: 6px; font-size: 13px; cursor: pointer; }
 .quoted-name { font-weight: bold; color: #00a884; display: block; font-size: 12px; margin-bottom: 2px;}
 .quoted-text { color: #555; display: block; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; max-width: 200px;}
 
-/* Bubbles & Media */
-.message { position: relative; max-width: 65%; padding: 8px 12px 20px 12px; border-radius: 8px; font-size: 15px; line-height: 1.4; word-wrap: break-word; box-shadow: 0 1px 1px rgba(0,0,0,0.15); will-change: transform;}
+/* FIX 3: Added touch-action: pan-y to block iOS swipe-to-go-back */
+.message { position: relative; max-width: 65%; padding: 8px 12px 20px 12px; border-radius: 8px; font-size: 15px; line-height: 1.4; word-wrap: break-word; box-shadow: 0 1px 1px rgba(0,0,0,0.15); will-change: transform; touch-action: pan-y; }
 .sent { background-color: #dcf8c6; align-self: flex-end; border-top-right-radius: 0; }
 .received { background-color: #ffffff; align-self: flex-start; border-top-left-radius: 0; }
 .sender-name { font-size: 0.75rem; font-weight: 600; color: #075E54; display: block; margin-bottom: 2px; }
@@ -40,7 +35,6 @@ header h3 { font-size: 16px; font-weight: 500; color: #111b21; }
 .message-image { max-width: 100%; border-radius: 8px; margin-top: 4px; margin-bottom: 15px; }
 audio { max-width: 220px; height: 40px; margin-top: 5px; margin-bottom: 15px; outline: none; }
 
-/* --- NEW: Bottom Section & Reply Banner --- */
 #chat-bottom { display: flex; flex-direction: column; background: #f0f2f5; }
 #reply-banner { display: flex; justify-content: space-between; align-items: center; background: #e9edef; padding: 10px 15px; border-left: 4px solid #00a884; font-size: 13px; animation: slideUp 0.2s ease-out; }
 #reply-content { display: flex; flex-direction: column; flex: 1; overflow: hidden; margin-right: 10px; }
@@ -49,7 +43,6 @@ audio { max-width: 220px; height: 40px; margin-top: 5px; margin-bottom: 15px; ou
 #cancel-reply-btn { background: none; border: none; font-size: 16px; cursor: pointer; color: #8696a0; padding: 5px; }
 @keyframes slideUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-/* Footer */
 footer { display: flex; padding: 10px 15px; align-items: center; }
 #message-input { flex: 1; padding: 12px 16px; border: none; border-radius: 24px; outline: none; margin-right: 10px; font-size: 15px; }
 #message-input:disabled { background: #e0e0e0; cursor: not-allowed; }
@@ -61,7 +54,6 @@ button { cursor: pointer; border: none; background: none; }
 .recording { color: red; animation: pulse 1.5s infinite; }
 @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.2); } 100% { transform: scale(1); } }
 
-/* Mobile Logic */
 .mobile-only { display: none; }
 @media (max-width: 768px) {
     #app-container { height: 100vh; border-radius: 0; }

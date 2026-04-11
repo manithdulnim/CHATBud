@@ -16,9 +16,8 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const provider = new GoogleAuthProvider();
 const db = getFirestore(app);
-const storage = getStorage(app); 
+const storage = getStorage(app);
 
-// DOM Elements
 const loginScreen = document.getElementById('login-screen');
 const appContainer = document.getElementById('app-container');
 const loginBtn = document.getElementById('login-btn');
@@ -32,20 +31,17 @@ const imageInput = document.getElementById('image-input');
 const micBtn = document.getElementById('mic-btn');
 const usersList = document.getElementById('users-list');
 const currentChatNameUI = document.getElementById('current-chat-name');
-const backBtn = document.getElementById('back-btn'); 
+const backBtn = document.getElementById('back-btn');
 
-// NEW: Reply Elements
 const replyBanner = document.getElementById('reply-banner');
 const replyToName = document.getElementById('reply-to-name');
 const replyToText = document.getElementById('reply-to-text');
 const cancelReplyBtn = document.getElementById('cancel-reply-btn');
 
-// App State
 let currentChatId = null;
-let unsubscribeMessages = null; 
-let replyingToMessage = null; // Keeps track of what we are replying to
+let unsubscribeMessages = null;
+let replyingToMessage = null;
 
-// --- Auth ---
 loginBtn.addEventListener('click', async () => { try { await signInWithPopup(auth, provider); } catch (error) { console.error("Login Failed", error); } });
 logoutBtn.addEventListener('click', () => { signOut(auth); });
 
@@ -55,22 +51,21 @@ onAuthStateChanged(auth, async (user) => {
         loginScreen.classList.add('hidden');
         appContainer.classList.remove('hidden');
         userNameDisplay.textContent = user.displayName;
-        loadSidebarUsers(); 
+        loadSidebarUsers();
     } else {
         loginScreen.classList.remove('hidden');
         appContainer.classList.add('hidden');
-        if (unsubscribeMessages) unsubscribeMessages(); 
+        if (unsubscribeMessages) unsubscribeMessages();
     }
 });
 
-// --- UI / Mobile Logic ---
 function loadSidebarUsers() {
     const q = query(collection(db, "users"));
     onSnapshot(q, (snapshot) => {
-        usersList.innerHTML = ''; 
+        usersList.innerHTML = '';
         snapshot.forEach((docSnap) => {
             const userData = docSnap.data();
-            if (userData.uid === auth.currentUser.uid) return; 
+            if (userData.uid === auth.currentUser.uid) return;
 
             const userElement = document.createElement('div');
             userElement.classList.add('user-item');
@@ -90,18 +85,16 @@ function openChat(otherUser) {
     const myUid = auth.currentUser.uid;
     const otherUid = otherUser.uid;
     currentChatId = [myUid, otherUid].sort().join('_');
-    
     currentChatNameUI.textContent = otherUser.displayName;
     messageInput.disabled = false;
     sendBtn.disabled = false;
-    appContainer.classList.add('chat-active'); 
-    cancelReply(); // Clear any pending replies when switching chats
-    loadMessages(); 
+    appContainer.classList.add('chat-active');
+    cancelReply();
+    loadMessages();
 }
 
 backBtn.addEventListener('click', () => { appContainer.classList.remove('chat-active'); });
 
-// --- NEW: Reply Logic ---
 function triggerReply(msg) {
     replyingToMessage = {
         displayName: msg.displayName,
@@ -113,27 +106,19 @@ function triggerReply(msg) {
     messageInput.focus();
 }
 
-function cancelReply() {
-    replyingToMessage = null;
-    replyBanner.classList.add('hidden');
-}
-
+function cancelReply() { replyingToMessage = null; replyBanner.classList.add('hidden'); }
 cancelReplyBtn.addEventListener('click', cancelReply);
 
-// --- Sending Data ---
 async function sendMessage() {
     const text = messageInput.value.trim();
-    if (text === '' || !currentChatId) return; 
+    if (text === '' || !currentChatId) return;
     const { uid, displayName } = auth.currentUser;
     try {
-        // Include the reply data if it exists
         const messageData = { text: text, type: "text", uid: uid, displayName: displayName, createdAt: serverTimestamp() };
         if (replyingToMessage) messageData.replyTo = replyingToMessage;
-
         await addDoc(collection(db, "chats", currentChatId, "messages"), messageData);
-        
-        messageInput.value = ''; 
-        cancelReply(); // Close banner after sending
+        messageInput.value = '';
+        cancelReply();
         chatContainer.scrollTop = chatContainer.scrollHeight;
     } catch (error) { console.error(error); }
 }
@@ -151,16 +136,14 @@ imageInput.addEventListener('change', async (e) => {
         const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
         const messageData = { text: "Photo", imageUrl: downloadURL, type: "image", uid: uid, displayName: displayName, createdAt: serverTimestamp() };
         if (replyingToMessage) messageData.replyTo = replyingToMessage;
-        
         await addDoc(collection(db, "chats", currentChatId, "messages"), messageData);
-        imageInput.value = '';
-        cancelReply();
+        imageInput.value = ''; cancelReply();
     });
 });
 
 let mediaRecorder, audioChunks = [], isRecording = false;
 micBtn.addEventListener('click', async () => {
-    if (!currentChatId) return; 
+    if (!currentChatId) return;
     if (!isRecording) {
         try {
             const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
@@ -170,12 +153,12 @@ micBtn.addEventListener('click', async () => {
             mediaRecorder.onstop = () => { uploadAudio(new Blob(audioChunks)); };
             mediaRecorder.start();
             isRecording = true;
-            micBtn.classList.add('recording'); 
-            messageInput.placeholder = "Recording..."; messageInput.disabled = true; 
+            micBtn.classList.add('recording');
+            messageInput.placeholder = "Recording..."; messageInput.disabled = true;
         } catch (err) { alert("Microphone access denied."); }
     } else {
         mediaRecorder.stop();
-        mediaRecorder.stream.getTracks().forEach(track => track.stop()); 
+        mediaRecorder.stream.getTracks().forEach(track => track.stop());
         isRecording = false;
         micBtn.classList.remove('recording');
         messageInput.placeholder = "Type a message..."; messageInput.disabled = false;
@@ -189,20 +172,18 @@ async function uploadAudio(blob) {
         const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
         const messageData = { text: "Voice Note", audioUrl: downloadURL, type: "audio", uid: uid, displayName: displayName, createdAt: serverTimestamp() };
         if (replyingToMessage) messageData.replyTo = replyingToMessage;
-
         await addDoc(collection(db, "chats", currentChatId, "messages"), messageData);
         cancelReply();
     });
 }
 
-// --- Reading Data & Touch Logic ---
 function loadMessages() {
     if (unsubscribeMessages) unsubscribeMessages();
-    chatContainer.innerHTML = ''; 
+    chatContainer.innerHTML = '';
     const q = query(collection(db, "chats", currentChatId, "messages"), orderBy("createdAt"));
 
     unsubscribeMessages = onSnapshot(q, (snapshot) => {
-        chatContainer.innerHTML = ''; 
+        chatContainer.innerHTML = '';
         if (snapshot.empty) { chatContainer.innerHTML = `<div class="message system-msg" style="align-self: center; background: #e4e6eb;">Send a message to start the chat!</div>`; return; }
 
         snapshot.forEach((doc) => {
@@ -210,15 +191,9 @@ function loadMessages() {
             const messageElement = document.createElement('div');
             messageElement.classList.add('message', message.uid === auth.currentUser.uid ? 'sent' : 'received');
             
-            // Build the Quoted HTML if this message is a reply
             let quoteHtml = '';
             if (message.replyTo) {
-                quoteHtml = `
-                    <div class="quoted-message">
-                        <span class="quoted-name">${message.replyTo.displayName}</span>
-                        <span class="quoted-text">${message.replyTo.text}</span>
-                    </div>
-                `;
+                quoteHtml = `<div class="quoted-message"><span class="quoted-name">${message.replyTo.displayName}</span><span class="quoted-text">${message.replyTo.text}</span></div>`;
             }
 
             let timeString = message.createdAt ? message.createdAt.toDate().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : '';
@@ -226,38 +201,41 @@ function loadMessages() {
 
             messageElement.innerHTML = `<span class="sender-name">${message.displayName}</span>${quoteHtml}${contentHtml}<span class="timestamp">${timeString}</span>`;
             
-            // --- NEW: Double Click & Swipe To Reply Logic ---
-            
-            // For Computer: Double Click
+            // --- BULLETPROOF TOUCH LOGIC ---
             messageElement.addEventListener('dblclick', () => { triggerReply(message); });
 
-            // For Phone: Swipe Right
-            let startX = 0;
-            let currentX = 0;
+            let startX = 0, currentX = 0, startY = 0, isSwiping = false;
 
             messageElement.addEventListener('touchstart', (e) => {
                 startX = e.touches[0].clientX;
+                startY = e.touches[0].clientY;
+                isSwiping = false;
             }, {passive: true});
 
             messageElement.addEventListener('touchmove', (e) => {
                 currentX = e.touches[0].clientX;
-                const diff = currentX - startX;
-                // Only allow swiping to the right, max 80px
-                if (diff > 0 && diff < 80) { 
-                    messageElement.style.transform = `translateX(${diff}px)`;
+                const currentY = e.touches[0].clientY;
+                const diffX = currentX - startX;
+                const diffY = Math.abs(currentY - startY);
+
+                // If scrolling vertically, abort the swipe!
+                if (diffY > 15 && !isSwiping) return;
+
+                if (diffX > 0 && diffX < 80) {
+                    isSwiping = true;
+                    messageElement.style.transform = `translateX(${diffX}px)`;
                     messageElement.style.transition = 'none';
                 }
             }, {passive: true});
 
-            messageElement.addEventListener('touchend', (e) => {
-                const diff = currentX - startX;
+            messageElement.addEventListener('touchend', () => {
+                if (!isSwiping) return;
+                const diffX = currentX - startX;
                 messageElement.style.transition = 'transform 0.3s ease';
                 messageElement.style.transform = `translateX(0px)`;
                 
-                if (diff > 40) { // If pulled far enough, trigger the reply!
-                    triggerReply(message);
-                }
-                startX = 0; currentX = 0;
+                if (diffX > 40) triggerReply(message);
+                startX = 0; currentX = 0; isSwiping = false;
             });
 
             chatContainer.appendChild(messageElement);
