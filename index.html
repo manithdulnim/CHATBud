@@ -3,14 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CHATbud</title>
+    <title>Chat Platform</title>
     
     <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
     <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
     <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
     <link rel="manifest" href="/site.webmanifest">
     <link rel="shortcut icon" href="/favicon.ico">
-    <meta name="theme-color" content="#00a884">
+    <meta name="theme-color" content="#00a884"> 
 
     <link rel="stylesheet" href="style.css">
 </head>
@@ -31,13 +31,15 @@
                 <h2 id="user-name">Loading...</h2>
                 <button id="logout-btn">Logout</button>
             </div>
-            <div id="users-list">
-                </div>
+            <div id="users-list"></div>
         </aside>
 
         <main id="chat-screen">
             <header>
-                <h3 id="current-chat-name">Select a user to start chatting</h3>
+                <div style="display: flex; align-items: center;">
+                    <button id="back-btn" class="mobile-only" title="Back to chats">←</button>
+                    <h3 id="current-chat-name" style="margin-left: 10px;">Select a user to start chatting</h3>
+                </div>
             </header>
 
             <div id="chat-container">

@@ -1,80 +1,33 @@
-* {
-    margin: 0; padding: 0; box-sizing: border-box;
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-}
-
-body {
-    background-color: #d1d7db; /* WhatsApp Web grey background */
-    height: 100vh; display: flex; justify-content: center; align-items: center;
-}
-
+* { margin: 0; padding: 0; box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
+body { background-color: #d1d7db; height: 100vh; display: flex; justify-content: center; align-items: center; }
 .hidden { display: none !important; }
 
-/* --- Login Screen --- */
-#login-screen {
-    width: 100%; max-width: 400px;
-    justify-content: center; align-items: center; background: transparent;
-}
-.card {
-    background: white; padding: 2rem; border-radius: 12px; text-align: center;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-}
-.card button {
-    background-color: #0084ff; color: white; border: none; padding: 10px 16px;
-    border-radius: 6px; cursor: pointer; font-size: 16px; margin-top: 1rem;
-}
+/* Login Screen */
+#login-screen { width: 100%; max-width: 400px; justify-content: center; align-items: center; background: transparent; }
+.card { background: white; padding: 2rem; border-radius: 12px; text-align: center; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+.card button { background-color: #0084ff; color: white; border: none; padding: 10px 16px; border-radius: 6px; cursor: pointer; font-size: 16px; margin-top: 1rem; }
 
-/* --- Main App Layout --- */
-#app-container {
-    width: 100%; max-width: 1200px; height: 95vh;
-    background: white; display: flex; box-shadow: 0 4px 20px rgba(0,0,0,0.1);
-    border-radius: 10px; overflow: hidden;
-}
+/* App Layout */
+#app-container { width: 100%; max-width: 1200px; height: 95vh; background: white; display: flex; box-shadow: 0 4px 20px rgba(0,0,0,0.1); border-radius: 10px; overflow: hidden; }
 
-/* --- Sidebar --- */
-#sidebar {
-    width: 30%; min-width: 250px; background: #ffffff;
-    border-right: 1px solid #d1d7db; display: flex; flex-direction: column;
-}
-.sidebar-header {
-    padding: 15px; background: #f0f2f5; display: flex; justify-content: space-between;
-    align-items: center; border-bottom: 1px solid #d1d7db;
-}
+/* Sidebar */
+#sidebar { width: 30%; min-width: 250px; background: #ffffff; border-right: 1px solid #d1d7db; display: flex; flex-direction: column; }
+.sidebar-header { padding: 15px; background: #f0f2f5; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #d1d7db; }
 .sidebar-header h2 { font-size: 16px; color: #111b21; }
-.sidebar-header button {
-    background: #e4e6eb; border: none; padding: 6px 10px; border-radius: 4px; cursor: pointer;
-}
-#users-list {
-    flex: 1; overflow-y: auto;
-}
-.user-item {
-    padding: 15px; border-bottom: 1px solid #f2f2f2; cursor: pointer;
-    display: flex; align-items: center; transition: background 0.2s;
-}
+.sidebar-header button { background: #e4e6eb; border: none; padding: 6px 10px; border-radius: 4px; cursor: pointer; }
+#users-list { flex: 1; overflow-y: auto; }
+.user-item { padding: 15px; border-bottom: 1px solid #f2f2f2; cursor: pointer; display: flex; align-items: center; transition: background 0.2s; }
 .user-item:hover { background: #f5f6f6; }
-.user-item.active { background: #ebebeb; } /* Highlights who you are talking to */
+.user-item.active { background: #ebebeb; }
 
-/* --- Chat Screen --- */
-#chat-screen {
-    flex: 1; display: flex; flex-direction: column; background: #efeae2;
-}
-header {
-    padding: 15px; background: #f0f2f5; border-bottom: 1px solid #d1d7db;
-}
+/* Chat Screen */
+#chat-screen { flex: 1; display: flex; flex-direction: column; background: #efeae2; }
+header { padding: 15px; background: #f0f2f5; border-bottom: 1px solid #d1d7db; }
 header h3 { font-size: 16px; font-weight: 500; color: #111b21; }
+#chat-container { flex: 1; padding: 1rem; overflow-y: auto; background-image: url("https://www.transparenttextures.com/patterns/cubes.png"); display: flex; flex-direction: column; gap: 8px; scroll-behavior: smooth; }
 
-#chat-container {
-    flex: 1; padding: 1rem; overflow-y: auto;
-    background-image: url("https://www.transparenttextures.com/patterns/cubes.png");
-    display: flex; flex-direction: column; gap: 8px; scroll-behavior: smooth;
-}
-
-/* --- Message Bubbles --- */
-.message {
-    position: relative; max-width: 65%; padding: 8px 12px 20px 12px;
-    border-radius: 8px; font-size: 15px; line-height: 1.4; word-wrap: break-word;
-    box-shadow: 0 1px 1px rgba(0,0,0,0.15);
-}
+/* Bubbles & Media */
+.message { position: relative; max-width: 65%; padding: 8px 12px 20px 12px; border-radius: 8px; font-size: 15px; line-height: 1.4; word-wrap: break-word; box-shadow: 0 1px 1px rgba(0,0,0,0.15); }
 .sent { background-color: #dcf8c6; align-self: flex-end; border-top-right-radius: 0; }
 .received { background-color: #ffffff; align-self: flex-start; border-top-left-radius: 0; }
 .sender-name { font-size: 0.75rem; font-weight: 600; color: #075E54; display: block; margin-bottom: 2px; }
@@ -82,22 +35,31 @@ header h3 { font-size: 16px; font-weight: 500; color: #111b21; }
 .message-image { max-width: 100%; border-radius: 8px; margin-top: 4px; margin-bottom: 15px; }
 audio { max-width: 220px; height: 40px; margin-top: 5px; margin-bottom: 15px; outline: none; }
 
-/* --- Footer --- */
-footer {
-    display: flex; padding: 10px 15px; background: #f0f2f5; align-items: center;
-}
-#message-input {
-    flex: 1; padding: 12px 16px; border: none; border-radius: 24px; outline: none;
-    margin-right: 10px; font-size: 15px;
-}
+/* Footer */
+footer { display: flex; padding: 10px 15px; background: #f0f2f5; align-items: center; }
+#message-input { flex: 1; padding: 12px 16px; border: none; border-radius: 24px; outline: none; margin-right: 10px; font-size: 15px; }
 #message-input:disabled { background: #e0e0e0; cursor: not-allowed; }
 button { cursor: pointer; border: none; background: none; }
-#send-btn {
-    background-color: #00a884; color: white; border-radius: 50%; width: 44px; height: 44px;
-    display: flex; justify-content: center; align-items: center; font-weight: bold;
-}
+#send-btn { background-color: #00a884; color: white; border-radius: 50%; width: 44px; height: 44px; display: flex; justify-content: center; align-items: center; font-weight: bold; }
 #send-btn:disabled { background-color: #a0a0a0; cursor: not-allowed; }
 #attach-btn, #mic-btn { font-size: 20px; margin-right: 10px; padding: 8px; border-radius: 50%; }
 #attach-btn:hover, #mic-btn:hover { background: #d1d7db; }
 .recording { color: red; animation: pulse 1.5s infinite; }
 @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.2); } 100% { transform: scale(1); } }
+
+/* --- NEW: MOBILE RESPONSIVE LOGIC --- */
+.mobile-only { display: none; } /* Hidden on computers */
+
+@media (max-width: 768px) {
+    #app-container { height: 100vh; border-radius: 0; } /* Full screen on phone */
+    #sidebar { width: 100%; min-width: 100%; display: flex; } /* Sidebar takes 100% width initially */
+    #chat-screen { display: none; width: 100%; } /* Chat hidden initially */
+
+    /* When a chat is clicked, JS adds 'chat-active' to swap them */
+    #app-container.chat-active #sidebar { display: none; }
+    #app-container.chat-active #chat-screen { display: flex; }
+
+    /* Make the back button look good */
+    .mobile-only { display: block; font-size: 24px; padding-right: 15px; padding-left: 5px; color: #00a884; }
+    .message { max-width: 85%; } /* Bubbles can be slightly wider on tiny screens */
+}
