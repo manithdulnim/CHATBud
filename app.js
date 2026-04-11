@@ -32,11 +32,18 @@ const imageInput = document.getElementById('image-input');
 const micBtn = document.getElementById('mic-btn');
 const usersList = document.getElementById('users-list');
 const currentChatNameUI = document.getElementById('current-chat-name');
-const backBtn = document.getElementById('back-btn'); // NEW: Back Button
+const backBtn = document.getElementById('back-btn'); 
 
-// App State Variables
+// NEW: Reply Elements
+const replyBanner = document.getElementById('reply-banner');
+const replyToName = document.getElementById('reply-to-name');
+const replyToText = document.getElementById('reply-to-text');
+const cancelReplyBtn = document.getElementById('cancel-reply-btn');
+
+// App State
 let currentChatId = null;
 let unsubscribeMessages = null; 
+let replyingToMessage = null; // Keeps track of what we are replying to
 
 // --- Auth ---
 loginBtn.addEventListener('click', async () => { try { await signInWithPopup(auth, provider); } catch (error) { console.error("Login Failed", error); } });
@@ -87,17 +94,31 @@ function openChat(otherUser) {
     currentChatNameUI.textContent = otherUser.displayName;
     messageInput.disabled = false;
     sendBtn.disabled = false;
-    
-    // NEW: Tell CSS to slide over to the chat screen on mobile
     appContainer.classList.add('chat-active'); 
-    
+    cancelReply(); // Clear any pending replies when switching chats
     loadMessages(); 
 }
 
-// NEW: Back button logic for mobile
-backBtn.addEventListener('click', () => {
-    appContainer.classList.remove('chat-active'); // Returns to sidebar
-});
+backBtn.addEventListener('click', () => { appContainer.classList.remove('chat-active'); });
+
+// --- NEW: Reply Logic ---
+function triggerReply(msg) {
+    replyingToMessage = {
+        displayName: msg.displayName,
+        text: msg.type === 'text' ? msg.text : (msg.type === 'image' ? '📷 Photo' : '🎤 Voice Note')
+    };
+    replyToName.textContent = replyingToMessage.displayName;
+    replyToText.textContent = replyingToMessage.text;
+    replyBanner.classList.remove('hidden');
+    messageInput.focus();
+}
+
+function cancelReply() {
+    replyingToMessage = null;
+    replyBanner.classList.add('hidden');
+}
+
+cancelReplyBtn.addEventListener('click', cancelReply);
 
 // --- Sending Data ---
 async function sendMessage() {
@@ -105,8 +126,14 @@ async function sendMessage() {
     if (text === '' || !currentChatId) return; 
     const { uid, displayName } = auth.currentUser;
     try {
-        await addDoc(collection(db, "chats", currentChatId, "messages"), { text: text, type: "text", uid: uid, displayName: displayName, createdAt: serverTimestamp() });
+        // Include the reply data if it exists
+        const messageData = { text: text, type: "text", uid: uid, displayName: displayName, createdAt: serverTimestamp() };
+        if (replyingToMessage) messageData.replyTo = replyingToMessage;
+
+        await addDoc(collection(db, "chats", currentChatId, "messages"), messageData);
+        
         messageInput.value = ''; 
+        cancelReply(); // Close banner after sending
         chatContainer.scrollTop = chatContainer.scrollHeight;
     } catch (error) { console.error(error); }
 }
@@ -122,8 +149,12 @@ imageInput.addEventListener('change', async (e) => {
     const uploadTask = uploadBytesResumable(ref(storage, `images/${currentChatId}_${Date.now()}_${file.name}`), file);
     uploadTask.on('state_changed', null, (error) => { console.error(error); }, async () => {
         const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
-        await addDoc(collection(db, "chats", currentChatId, "messages"), { text: "Photo", imageUrl: downloadURL, type: "image", uid: uid, displayName: displayName, createdAt: serverTimestamp() });
+        const messageData = { text: "Photo", imageUrl: downloadURL, type: "image", uid: uid, displayName: displayName, createdAt: serverTimestamp() };
+        if (replyingToMessage) messageData.replyTo = replyingToMessage;
+        
+        await addDoc(collection(db, "chats", currentChatId, "messages"), messageData);
         imageInput.value = '';
+        cancelReply();
     });
 });
 
@@ -156,11 +187,15 @@ async function uploadAudio(blob) {
     const uploadTask = uploadBytesResumable(ref(storage, `audio/${currentChatId}_${Date.now()}.webm`), blob);
     uploadTask.on('state_changed', null, (error) => { console.error(error); }, async () => {
         const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
-        await addDoc(collection(db, "chats", currentChatId, "messages"), { text: "Voice Note", audioUrl: downloadURL, type: "audio", uid: uid, displayName: displayName, createdAt: serverTimestamp() });
+        const messageData = { text: "Voice Note", audioUrl: downloadURL, type: "audio", uid: uid, displayName: displayName, createdAt: serverTimestamp() };
+        if (replyingToMessage) messageData.replyTo = replyingToMessage;
+
+        await addDoc(collection(db, "chats", currentChatId, "messages"), messageData);
+        cancelReply();
     });
 }
 
-// --- Reading Data ---
+// --- Reading Data & Touch Logic ---
 function loadMessages() {
     if (unsubscribeMessages) unsubscribeMessages();
     chatContainer.innerHTML = ''; 
@@ -175,10 +210,56 @@ function loadMessages() {
             const messageElement = document.createElement('div');
             messageElement.classList.add('message', message.uid === auth.currentUser.uid ? 'sent' : 'received');
             
+            // Build the Quoted HTML if this message is a reply
+            let quoteHtml = '';
+            if (message.replyTo) {
+                quoteHtml = `
+                    <div class="quoted-message">
+                        <span class="quoted-name">${message.replyTo.displayName}</span>
+                        <span class="quoted-text">${message.replyTo.text}</span>
+                    </div>
+                `;
+            }
+
             let timeString = message.createdAt ? message.createdAt.toDate().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : '';
             let contentHtml = message.type === 'image' ? `<img src="${message.imageUrl}" class="message-image">` : message.type === 'audio' ? `<audio controls src="${message.audioUrl}"></audio>` : `<span class="message-text">${message.text}</span>`;
 
-            messageElement.innerHTML = `<span class="sender-name">${message.displayName}</span>${contentHtml}<span class="timestamp">${timeString}</span>`;
+            messageElement.innerHTML = `<span class="sender-name">${message.displayName}</span>${quoteHtml}${contentHtml}<span class="timestamp">${timeString}</span>`;
+            
+            // --- NEW: Double Click & Swipe To Reply Logic ---
+            
+            // For Computer: Double Click
+            messageElement.addEventListener('dblclick', () => { triggerReply(message); });
+
+            // For Phone: Swipe Right
+            let startX = 0;
+            let currentX = 0;
+
+            messageElement.addEventListener('touchstart', (e) => {
+                startX = e.touches[0].clientX;
+            }, {passive: true});
+
+            messageElement.addEventListener('touchmove', (e) => {
+                currentX = e.touches[0].clientX;
+                const diff = currentX - startX;
+                // Only allow swiping to the right, max 80px
+                if (diff > 0 && diff < 80) { 
+                    messageElement.style.transform = `translateX(${diff}px)`;
+                    messageElement.style.transition = 'none';
+                }
+            }, {passive: true});
+
+            messageElement.addEventListener('touchend', (e) => {
+                const diff = currentX - startX;
+                messageElement.style.transition = 'transform 0.3s ease';
+                messageElement.style.transform = `translateX(0px)`;
+                
+                if (diff > 40) { // If pulled far enough, trigger the reply!
+                    triggerReply(message);
+                }
+                startX = 0; currentX = 0;
+            });
+
             chatContainer.appendChild(messageElement);
         });
         chatContainer.scrollTop = chatContainer.scrollHeight;

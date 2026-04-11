@@ -21,11 +21,11 @@
             <h1>Welcome</h1>
             <p>Sign in to start chatting</p>
             <button id="login-btn">Sign in with Google</button>
+            <p>Exclusively by ©️Manith Dulnim</p>
         </div>
     </div>
 
     <div id="app-container" class="hidden">
-        
         <aside id="sidebar">
             <div class="sidebar-header">
                 <h2 id="user-name">Loading...</h2>
@@ -48,13 +48,23 @@
                 </div>
             </div>
 
-            <footer>
-                <input type="file" id="image-input" accept="image/*" class="hidden">
-                <button id="attach-btn" title="Attach Photo">📎</button>
-                <button id="mic-btn" title="Record Voice Note">🎤</button>
-                <input type="text" id="message-input" placeholder="Type a message..." autocomplete="off" disabled>
-                <button id="send-btn" disabled>Send</button>
-            </footer>
+            <div id="chat-bottom">
+                <div id="reply-banner" class="hidden">
+                    <div id="reply-content">
+                        <span id="reply-to-name">Name</span>
+                        <span id="reply-to-text">Message text...</span>
+                    </div>
+                    <button id="cancel-reply-btn">✕</button>
+                </div>
+
+                <footer>
+                    <input type="file" id="image-input" accept="image/*" class="hidden">
+                    <button id="attach-btn" title="Attach Photo">📎</button>
+                    <button id="mic-btn" title="Record Voice Note">🎤</button>
+                    <input type="text" id="message-input" placeholder="Type a message..." autocomplete="off" disabled>
+                    <button id="send-btn" disabled>Send</button>
+                </footer>
+            </div>
         </main>
     </div>
 
