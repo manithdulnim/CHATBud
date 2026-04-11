@@ -175,3 +175,28 @@ footer {
 #send-btn:hover {
     background-color: #008f6f;
 }
+
+/* --- Attachment Button --- */
+#attach-btn {
+    background: none;
+    border: none;
+    font-size: 20px;
+    cursor: pointer;
+    margin-right: 10px;
+    padding: 8px;
+    border-radius: 50%;
+    transition: background 0.2s;
+}
+
+#attach-btn:hover {
+    background: #e4e6eb;
+}
+
+/* --- Image Messages --- */
+.message-image {
+    max-width: 100%;
+    border-radius: 8px;
+    margin-top: 4px;
+    margin-bottom: 15px; /* Room for timestamp */
+    cursor: pointer;
+}
