@@ -2,15 +2,15 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CHATbud</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Chat Platform</title>
     
     <link rel="apple-touch-icon" sizes="180x180" href="./apple-touch-icon.png">
     <link rel="icon" type="image/png" sizes="32x32" href="./favicon-32x32.png">
     <link rel="icon" type="image/png" sizes="16x16" href="./favicon-16x16.png">
     <link rel="manifest" href="./site.webmanifest">
     <link rel="shortcut icon" href="./favicon.ico">
-    <meta name="theme-color" content="#00a884">
+    <meta name="theme-color" content="#00a884"> 
 
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -64,7 +64,12 @@
                     <button id="attach-btn" title="Attach Photo">📎</button>
                     <button id="mic-btn" title="Record Voice Note">🎤</button>
                     <input type="text" id="message-input" placeholder="Type a message..." autocomplete="off" disabled>
-                    <button id="send-btn" disabled>Send</button>
+                    
+                    <button id="send-btn" disabled>
+                        <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
+                            <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"></path>
+                        </svg>
+                    </button>
                 </footer>
             </div>
         </main>
